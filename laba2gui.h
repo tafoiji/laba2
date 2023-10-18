@@ -11,6 +11,7 @@
 #include <QFileDialog>
 #include <QVBoxLayout>
 #include <QDirIterator>
+#include <QImageWriter>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Laba2Gui; }
@@ -28,6 +29,7 @@ public:
 
 private:
     Ui::Laba2Gui *ui;
+    QTableWidget *table;
 
 public slots:
     void openFile(bool);

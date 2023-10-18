@@ -3,13 +3,13 @@
 
 Laba2Gui::Laba2Gui(QWidget *parent)
     : QMainWindow(parent)
-    , ui(new Ui::Laba2Gui)
+    , ui(new Ui::Laba2Gui), table(new QTableWidget(0, 5))
 {
     ui->setupUi(this);
 
     QMenuBar *menuBar = new QMenuBar(this);
     QMenu *menu = new QMenu("Open..", this);
-    QAction* opFile = new QAction("Open File", this);
+    QAction* opFile = new QAction("Open File(s)", this);
     QAction* opDir = new QAction("Open Directory", this);
     menu->addAction(opFile);
     menu->addAction(opDir);
@@ -27,7 +27,8 @@ Laba2Gui::~Laba2Gui()
 
 void Laba2Gui::drawTable(QVector<QString> vec)
 {
-    QTableWidget* table = new QTableWidget(0, 5);
+    delete table;
+    table = new QTableWidget(0,5);
 
     QStringList headerLabels;
     headerLabels << "Name" << "Resloution" << "DPI" << "Color Deep" << "Compression";
@@ -56,14 +57,11 @@ void Laba2Gui::drawTable(QVector<QString> vec)
         temp4->setText(QString::number(image.bitPlaneCount()));
         table->setItem(table->rowCount() - 1, 3, temp4);
 
-        //QTableWidgetItem* temp5 = new QTableWidgetItem();
-        //temp5->setText(QString::number(image.bitPlaneCount()));
-        //table->setItem(table->rowCount() - 1, 4, temp5);
+        QTableWidgetItem* temp5 = new QTableWidgetItem();
+        QImageWriter imwr(name);
+        temp5->setText(QString::number(imwr.compression()));
+        table->setItem(table->rowCount() - 1, 4, temp5);
     }
-
-    //QVBoxLayout *lay = new QVBoxLayout();
-    //lay -> addWidget(table);
-    //this->setLayout(lay);
 
     this->setCentralWidget(table);
 }
@@ -72,7 +70,7 @@ void Laba2Gui::openFile(bool)
 {
     QFileDialog *fileDialog = new QFileDialog(this);
     fileDialog->setFileMode(QFileDialog::AnyFile);
-    QStringList fileName = fileDialog->getOpenFileNames(this, tr("Open Image"), "C:/", tr("Image Files (*.png *.jpg *.bmp *.gif *.tif *.pcx)"));
+    QStringList fileName = fileDialog->getOpenFileNames(this, tr("Open Image"), "C:/", tr("Image Files (*.png *.jpg *.bmp *.gif *.tiff *.pcx)"));
     QVector<QString> vec;
     for (auto& item: fileName)
     {
@@ -88,7 +86,7 @@ void Laba2Gui::openDirectory(bool)
     fileDialog->setFileMode(QFileDialog::Directory);
     QString path = fileDialog->getExistingDirectory(this, tr("Choose directory"), "C:/");
     QVector<QString> vec;
-    QDirIterator it(path, {"*.png",  "*.jpg",  "*.bmp", "*.gif",  "*.tif", "*.pcx"} , QDir::Files);
+    QDirIterator it(path, {"*.png",  "*.jpg",  "*.bmp", "*.gif",  "*.tiff", "*.pcx"} , QDir::Files);
 
     while (it.hasNext())
     {
